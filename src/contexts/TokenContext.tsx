@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { useSession } from "next-auth/react";
+import { API_ROUTES } from "@/lib/routes";
 
 interface TokenContextType {
   fullTokenPayload: Record<string, unknown> | null;
@@ -47,7 +48,7 @@ export function TokenProvider({ children }: TokenProviderProps) {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch("/api/auth/token-details");
+        const response = await fetch(API_ROUTES.AUTH.TOKEN_DETAILS);
         
         if (!response.ok) {
           if (response.status === 401) {

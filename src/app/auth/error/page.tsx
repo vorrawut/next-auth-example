@@ -6,6 +6,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { LoadingState } from "@/components/ui/LoadingState";
+import { PAGE_ROUTES } from "@/lib/routes";
 import Link from "next/link";
 
 function AuthErrorContent() {
@@ -66,7 +67,7 @@ function AuthErrorContent() {
                   It looks like you need to reset your password. This usually happens on your first login after an administrator creates your account.
                 </p>
                 <div className="mt-4">
-                  <Link href="/reset-password">
+                  <Link href={PAGE_ROUTES.RESET_PASSWORD}>
                     <Button variant="primary" size="md" fullWidth>
                       Go to Password Reset
                     </Button>
@@ -76,12 +77,12 @@ function AuthErrorContent() {
             )}
 
             <div className="flex gap-3">
-              <Link href="/login" className="flex-1">
+              <Link href={PAGE_ROUTES.LOGIN} className="flex-1">
                 <Button variant="primary" size="lg" fullWidth>
                   Try Again
                 </Button>
               </Link>
-              <Link href="/" className="flex-1">
+              <Link href={PAGE_ROUTES.HOME} className="flex-1">
                 <Button variant="secondary" size="lg" fullWidth>
                   Go Home
                 </Button>

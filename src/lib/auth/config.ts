@@ -41,6 +41,14 @@ export function createAuthOptions() {
     callbacks: {
       jwt: jwtCallback,
       session: sessionCallback,
+      redirect: async ({ url, baseUrl }: { url: string; baseUrl: string }) => {
+        // If url is relative, make it absolute
+        if (url.startsWith("/")) return `${baseUrl}${url}`;
+        // If url is on same origin, allow it
+        if (new URL(url).origin === baseUrl) return url;
+        // Default to home page
+        return baseUrl;
+      },
     },
     pages: {
       signIn: "/login",
@@ -50,4 +58,3 @@ export function createAuthOptions() {
     debug: process.env.NODE_ENV === "development",
   };
 }
-

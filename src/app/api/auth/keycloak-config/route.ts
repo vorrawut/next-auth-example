@@ -1,23 +1,14 @@
-import { NextResponse } from "next/server";
+import { withErrorHandling, errorResponse, successResponse } from "@/lib/api/utils";
+import { getKeycloakConfig } from "@/lib/api/auth/services";
 
-/**
- * API route to get Keycloak configuration for client-side use
- * Only exposes safe, non-sensitive configuration
- */
-export async function GET() {
-  const issuer = process.env.KEYCLOAK_ISSUER;
-  const clientId = process.env.KEYCLOAK_CLIENT_ID;
+async function handler() {
+  const result = getKeycloakConfig();
 
-  if (!issuer || !clientId) {
-    return NextResponse.json(
-      { error: "Keycloak configuration not found" },
-      { status: 500 }
-    );
+  if ("error" in result) {
+    return errorResponse(result.error, result.status);
   }
 
-  return NextResponse.json({
-    issuer,
-    clientId,
-  });
+  return successResponse(result);
 }
 
+export const GET = withErrorHandling(handler);

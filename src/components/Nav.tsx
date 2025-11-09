@@ -2,9 +2,9 @@
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import Login from "./Login";
-import Logout from "./Logout";
+import AuthButton from "./AuthButton";
 import { usePermissions } from "@/contexts/PermissionContext";
+import { PAGE_ROUTES } from "@/lib/routes";
 
 export default function Nav() {
   const { data: session, status } = useSession();
@@ -17,7 +17,7 @@ export default function Nav() {
   return (
     <nav className="flex items-center gap-4 p-4 border-b border-gray-200 dark:border-gray-800">
       <Link
-        href="/"
+        href={PAGE_ROUTES.HOME}
         className="text-lg font-semibold text-black dark:text-white"
       >
         Home
@@ -25,14 +25,14 @@ export default function Nav() {
       {status === "authenticated" && (
         <>
           <Link
-            href="/profile"
+            href={PAGE_ROUTES.PROFILE}
             className="text-lg font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
           >
             Profile
           </Link>
           {isEmployee && (
             <Link
-              href="/Secured"
+              href={PAGE_ROUTES.SECURED}
               className="text-lg font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
             >
               Dashboard
@@ -40,7 +40,7 @@ export default function Nav() {
           )}
           {isManager && (
             <Link
-              href="/manager"
+              href={PAGE_ROUTES.MANAGER}
               className="text-lg font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
             >
               Approvals
@@ -49,13 +49,13 @@ export default function Nav() {
           {isAdmin && (
             <>
               <Link
-                href="/admin"
+                href={PAGE_ROUTES.ADMIN}
                 className="text-lg font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
               >
                 Admin Panel
               </Link>
               <Link
-                href="/manager"
+                href={PAGE_ROUTES.MANAGER}
                 className="text-lg font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
               >
                 Reports
@@ -77,10 +77,10 @@ export default function Nav() {
                 </span>
               )}
             </span>
-            <Logout />
+            <AuthButton type="logout" />
           </div>
         ) : (
-          <Login />
+          <AuthButton type="login" />
         )}
       </div>
     </nav>
