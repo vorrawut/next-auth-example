@@ -1,18 +1,14 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { usePermissions } from "@/contexts/PermissionContext";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { LoadingState } from "@/components/ui/LoadingState";
-import { ErrorState } from "@/components/ui/ErrorState";
+import { PageHeader, LoadingState, ErrorState } from "@/components/ui";
 import { UserInfoCard } from "@/components/profile/UserInfoCard";
 import { TokenInfoCard } from "@/components/profile/TokenInfoCard";
 import { RolesPermissionsPanel } from "@/components/profile/RolesPermissionsPanel";
 import { TokenDetailsPanel } from "@/components/profile/TokenDetailsPanel";
 
 export default function Profile() {
-  const { data: session, status } = useSession();
-  const { highestRole } = usePermissions();
+  const { status } = useSession();
 
   if (status === "loading") {
     return <LoadingState />;
@@ -28,10 +24,7 @@ export default function Profile() {
         <PageHeader title="Profile" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <UserInfoCard
-            session={session}
-            highestRole={highestRole}
-          />
+          <UserInfoCard />
           <TokenInfoCard />
         </div>
 

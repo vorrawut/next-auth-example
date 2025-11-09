@@ -33,7 +33,9 @@ export async function POST(request: NextRequest) {
       logoutUrl,
     });
   } catch (error) {
-    console.error("Error in federated logout:", error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("Error in federated logout:", error);
+    }
     return NextResponse.json(
       { error: "Failed to perform federated logout" },
       { status: 500 }

@@ -1,13 +1,16 @@
+"use client";
+
 import { Badge } from "@/components/ui/Badge";
-import type { Session } from "next-auth";
+import { usePermissions } from "@/contexts/PermissionContext";
 
 interface RolesDisplayProps {
-  session: Session | null;
   variant?: "purple" | "blue" | "green" | "orange";
 }
 
-export function RolesDisplay({ session, variant = "purple" }: RolesDisplayProps) {
-  if (!session?.roles || session.roles.length === 0) {
+export function RolesDisplay({ variant = "purple" }: RolesDisplayProps) {
+  const { normalizedRoles } = usePermissions();
+
+  if (!normalizedRoles || normalizedRoles.length === 0) {
     return (
       <div>
         <h3 className="text-lg font-semibold mb-2 text-black dark:text-white">
@@ -24,9 +27,9 @@ export function RolesDisplay({ session, variant = "purple" }: RolesDisplayProps)
         Your Roles
       </h3>
       <div className="flex flex-wrap gap-2">
-        {session.roles.map((role) => (
+        {normalizedRoles.map((role) => (
           <Badge key={role} variant={variant} size="sm">
-            {role}
+            {role.charAt(0).toUpperCase() + role.slice(1)}
           </Badge>
         ))}
       </div>

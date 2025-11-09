@@ -1,11 +1,11 @@
+"use client";
+
+import { useSession } from "next-auth/react";
 import { InfoField } from "@/components/ui/InfoField";
-import type { Session } from "next-auth";
 
-interface PersonalInfoProps {
-  session: Session | null;
-}
+export function PersonalInfo() {
+  const { data: session } = useSession();
 
-export function PersonalInfo({ session }: PersonalInfoProps) {
   return (
     <div>
       <h3 className="text-lg font-semibold mb-4 text-black dark:text-white">

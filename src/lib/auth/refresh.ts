@@ -54,7 +54,9 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       error: undefined,
     };
   } catch (error) {
-    console.error("[Auth] Error refreshing access token:", error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("[Auth] Error refreshing access token:", error);
+    }
     return {
       ...token,
       error: "RefreshAccessTokenError",

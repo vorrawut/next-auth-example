@@ -1,9 +1,9 @@
 "use client";
 
-import { Card, CardHeader, CardContent } from "@/components/ui/Card";
-import { InfoField } from "@/components/ui/InfoField";
+import { Card, CardHeader, CardContent, InfoField } from "@/components/ui";
 import { formatTokenDate } from "@/utils/token";
 import { useToken } from "@/contexts/TokenContext";
+import { getTokenNumber, getTokenString, getTokenArray } from "@/utils/tokenHelpers";
 
 export function TokenInfoCard() {
   const { fullTokenPayload } = useToken();
@@ -19,19 +19,19 @@ export function TokenInfoCard() {
     );
   }
   
-  const iat = fullTokenPayload.iat as number | undefined;
-  const exp = fullTokenPayload.exp as number | undefined;
-  const authTime = fullTokenPayload.auth_time as number | undefined;
-  const jti = fullTokenPayload.jti as string | undefined;
-  const iss = fullTokenPayload.iss as string | undefined;
+  const iat = getTokenNumber(fullTokenPayload, "iat");
+  const exp = getTokenNumber(fullTokenPayload, "exp");
+  const authTime = getTokenNumber(fullTokenPayload, "auth_time");
+  const jti = getTokenString(fullTokenPayload, "jti");
+  const iss = getTokenString(fullTokenPayload, "iss");
   const aud = fullTokenPayload.aud as string | string[] | undefined;
-  const sub = fullTokenPayload.sub as string | undefined;
-  const typ = fullTokenPayload.typ as string | undefined;
-  const azp = fullTokenPayload.azp as string | undefined;
-  const sid = fullTokenPayload.sid as string | undefined;
-  const acr = fullTokenPayload.acr as string | undefined;
-  const scope = fullTokenPayload.scope as string | undefined;
-  const allowedOrigins = fullTokenPayload["allowed-origins"] as string[] | undefined;
+  const sub = getTokenString(fullTokenPayload, "sub");
+  const typ = getTokenString(fullTokenPayload, "typ");
+  const azp = getTokenString(fullTokenPayload, "azp");
+  const sid = getTokenString(fullTokenPayload, "sid");
+  const acr = getTokenString(fullTokenPayload, "acr");
+  const scope = getTokenString(fullTokenPayload, "scope");
+  const allowedOrigins = getTokenArray<string>(fullTokenPayload, "allowed-origins");
   
   return (
     <Card>

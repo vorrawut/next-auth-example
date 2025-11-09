@@ -1,14 +1,13 @@
-import { Card, CardHeader, CardContent } from "@/components/ui/Card";
+"use client";
+
+import { useSession } from "next-auth/react";
 import { Badge } from "@/components/ui/Badge";
-import type { Session } from "next-auth";
-import type { Role } from "@/lib/permissions/roles";
+import { usePermissions } from "@/contexts/PermissionContext";
 
-interface WelcomeCardProps {
-  session: Session | null;
-  highestRole: Role | null;
-}
+export function WelcomeCard() {
+  const { data: session } = useSession();
+  const { highestRole } = usePermissions();
 
-export function WelcomeCard({ session, highestRole }: WelcomeCardProps) {
   return (
     <div>
       <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">

@@ -27,7 +27,9 @@ export async function federatedLogout() {
     // Fallback to regular sign out if federated logout fails
     await signOut({ callbackUrl: "/", redirect: true });
   } catch (error) {
-    console.error("Error during federated logout:", error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("Error during federated logout:", error);
+    }
     // Fallback to regular sign out
     await signOut({ callbackUrl: "/", redirect: true });
   }

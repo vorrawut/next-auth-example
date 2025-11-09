@@ -1,22 +1,17 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import { usePermissions } from "@/contexts/PermissionContext";
 import { Card, CardContent } from "@/components/ui";
 import { PageHeader } from "@/components/ui";
 import { WelcomeCard, FeatureCard, RolesDisplay } from "@/components/dashboard";
 
 export default function ManagerDashboard() {
-  const { data: session } = useSession();
-  const { highestRole } = usePermissions();
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-8">
       <div className="max-w-4xl w-full space-y-6">
         <PageHeader title="Manager Dashboard" backHref="/" />
         <Card>
           <CardContent className="space-y-4">
-            <WelcomeCard session={session} highestRole={highestRole} />
+            <WelcomeCard />
 
             <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
               <h3 className="text-lg font-semibold mb-4 text-black dark:text-white">
@@ -40,7 +35,7 @@ export default function ManagerDashboard() {
             </div>
 
             <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-              <RolesDisplay session={session} variant="green" />
+              <RolesDisplay variant="green" />
             </div>
           </CardContent>
         </Card>

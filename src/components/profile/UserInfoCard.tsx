@@ -1,25 +1,21 @@
 "use client";
 
-import { Card, CardHeader, CardContent } from "@/components/ui/Card";
-import { InfoField } from "@/components/ui/InfoField";
-import { Badge } from "@/components/ui/Badge";
-import type { Session } from "next-auth";
-import type { Role } from "@/lib/permissions/roles";
+import { useSession } from "next-auth/react";
+import { Card, CardHeader, CardContent, InfoField, Badge } from "@/components/ui";
 import { useToken } from "@/contexts/TokenContext";
+import { usePermissions } from "@/contexts/PermissionContext";
+import { getTokenString, getTokenBoolean } from "@/utils/tokenHelpers";
 
-interface UserInfoCardProps {
-  session: Session | null;
-  highestRole: Role | null;
-}
-
-export function UserInfoCard({ session, highestRole }: UserInfoCardProps) {
+export function UserInfoCard() {
+  const { data: session } = useSession();
   const { fullTokenPayload } = useToken();
+  const { highestRole } = usePermissions();
   
   // Extract user fields from full token payload
-  const givenName = (fullTokenPayload?.given_name as string | undefined) || "";
-  const familyName = (fullTokenPayload?.family_name as string | undefined) || "";
-  const preferredUsername = (fullTokenPayload?.preferred_username as string | undefined) || "";
-  const emailVerified = (fullTokenPayload?.email_verified as boolean | undefined) ?? false;
+  const givenName = getTokenString(fullTokenPayload, "given_name") || "";
+  const familyName = getTokenString(fullTokenPayload, "family_name") || "";
+  const preferredUsername = getTokenString(fullTokenPayload, "preferred_username") || "";
+  const emailVerified = getTokenBoolean(fullTokenPayload, "email_verified") ?? false;
   
   return (
     <Card>

@@ -1,9 +1,8 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { useSession } from "next-auth/react";
 
-// Use Record to accept all fields from the token, not just those in TokenPayload
 interface TokenContextType {
   fullTokenPayload: Record<string, unknown> | null;
   loading: boolean;
@@ -29,17 +28,17 @@ export function TokenProvider({ children }: TokenProviderProps) {
   const [fullTokenPayload, setFullTokenPayload] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasFetchedRef = useRef(false);
 
   useEffect(() => {
-    // Only fetch if authenticated
     if (status !== "authenticated" || !session) {
       setLoading(false);
       setFullTokenPayload(null);
+      hasFetchedRef.current = false;
       return;
     }
 
-    // If we already have the payload, don't fetch again
-    if (fullTokenPayload) {
+    if (hasFetchedRef.current) {
       setLoading(false);
       return;
     }
@@ -62,6 +61,7 @@ export function TokenProvider({ children }: TokenProviderProps) {
         
         const data = await response.json();
         setFullTokenPayload(data.tokenPayload);
+        hasFetchedRef.current = true;
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch token details");
         setFullTokenPayload(null);
@@ -71,15 +71,14 @@ export function TokenProvider({ children }: TokenProviderProps) {
     }
 
     fetchFullToken();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, session]);
 
-  // Reset when session changes (logout/login)
   useEffect(() => {
     if (status === "unauthenticated") {
       setFullTokenPayload(null);
       setError(null);
       setLoading(false);
+      hasFetchedRef.current = false;
     }
   }, [status]);
 

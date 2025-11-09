@@ -24,7 +24,7 @@ export default function SecuredPage() {
         <Card>
           <CardHeader title={`Welcome, ${session?.user?.name || session?.user?.email}!`} />
           <CardContent>
-            <PersonalInfo session={session} />
+            <PersonalInfo />
           </CardContent>
         </Card>
       </div>
