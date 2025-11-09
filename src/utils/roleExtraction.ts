@@ -26,15 +26,15 @@ function extractRolesFromPayload(payload: DecodedToken): {
 }
 
 export function extractAndNormalizeRoles(
-  idToken: string | undefined,
+  token: string | undefined, // Can be access_token or id_token
   profile?: { realm_access?: { roles?: string[] }; resource_access?: Record<string, { roles?: string[] }> }
 ): { normalizedRoles: string[] } {
   let realmRoles: string[] = [];
   let resourceRoles: string[] = [];
   let groups: string[] = [];
 
-  if (idToken) {
-    const payload = decodeIdToken(idToken);
+  if (token) {
+    const payload = decodeIdToken(token);
     if (payload) {
       const extracted = extractRolesFromPayload(payload);
       realmRoles = extracted.realmRoles;
@@ -57,6 +57,16 @@ export function extractAndNormalizeRoles(
 
   const extractedRoles = [...realmRoles, ...resourceRoles, ...groups];
   const normalizedRoles = normalizeRoles(extractedRoles);
+
+  if (process.env.NODE_ENV === "development") {
+    console.log("[RoleExtraction] Extracted roles:", {
+      realmRoles,
+      resourceRoles,
+      groups,
+      allExtracted: extractedRoles,
+      normalized: normalizedRoles,
+    });
+  }
 
   return { normalizedRoles };
 }

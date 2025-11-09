@@ -31,15 +31,21 @@ export function extractAllPermissions(tokenPayload: TokenPayload | Record<string
   
   // Add realm roles
   const realmAccess = tokenPayload.realm_access as { roles?: string[] } | undefined;
-  const realmRoles = realmAccess?.roles || [];
-  permissions.push(...realmRoles);
+  if (realmAccess && typeof realmAccess === "object" && "roles" in realmAccess) {
+    const realmRoles = Array.isArray(realmAccess.roles) ? realmAccess.roles : [];
+    permissions.push(...realmRoles);
+  }
   
   // Add all resource roles
-  const resourceAccess = tokenPayload.resource_access as Record<string, { roles?: string[] }> | undefined || {};
-  Object.values(resourceAccess).forEach((resource) => {
-    const roles = resource.roles || [];
-    permissions.push(...roles);
-  });
+  const resourceAccess = tokenPayload.resource_access as Record<string, { roles?: string[] }> | undefined;
+  if (resourceAccess && typeof resourceAccess === "object") {
+    Object.values(resourceAccess).forEach((resource) => {
+      if (resource && typeof resource === "object" && "roles" in resource) {
+        const roles = Array.isArray(resource.roles) ? resource.roles : [];
+        permissions.push(...roles);
+      }
+    });
+  }
   
   return permissions;
 }
@@ -47,10 +53,20 @@ export function extractAllPermissions(tokenPayload: TokenPayload | Record<string
 export function getResourceRolesByResource(tokenPayload: TokenPayload | Record<string, unknown> | null) {
   if (!tokenPayload) return [];
   
-  const resourceAccess = tokenPayload.resource_access as Record<string, { roles?: string[] }> | undefined || {};
-  return Object.entries(resourceAccess).map(([resource, data]) => ({
-    resource,
-    roles: data.roles || [],
-  }));
+  const resourceAccess = tokenPayload.resource_access as Record<string, { roles?: string[] }> | undefined;
+  
+  if (!resourceAccess || typeof resourceAccess !== "object") {
+    return [];
+  }
+  
+  return Object.entries(resourceAccess).map(([resource, data]) => {
+    const roles = data && typeof data === "object" && "roles" in data 
+      ? (Array.isArray(data.roles) ? data.roles : [])
+      : [];
+    return {
+      resource,
+      roles,
+    };
+  });
 }
 

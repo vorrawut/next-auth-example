@@ -19,6 +19,7 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
         client_secret: process.env.KEYCLOAK_CLIENT_SECRET!,
         grant_type: "refresh_token",
         refresh_token: token.refreshToken,
+        scope: "openid email profile", // Ensure we request the same scopes
       }),
       method: "POST",
       cache: "no-store",

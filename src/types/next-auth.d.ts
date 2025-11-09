@@ -30,6 +30,7 @@ declare module "next-auth/jwt" {
     expiresAt?: number; // Unix timestamp in seconds
     error?: string;
     roles?: string[];
+    fullTokenPayload?: Record<string, unknown>; // Store full decoded token payload
   }
 }
 
