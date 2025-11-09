@@ -48,7 +48,9 @@ export function TokenProvider({ children }: TokenProviderProps) {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(API_ROUTES.AUTH.TOKEN_DETAILS);
+        const response = await fetch(API_ROUTES.AUTH.TOKEN_DETAILS, {
+          credentials: "include", // Important: include cookies for authentication
+        });
         
         if (!response.ok) {
           if (response.status === 401) {
@@ -61,7 +63,10 @@ export function TokenProvider({ children }: TokenProviderProps) {
         }
         
         const data = await response.json();
-        setFullTokenPayload(data.tokenPayload);
+        // API returns { success: true, data: tokenPayload }
+        const tokenPayload = data.data || data.tokenPayload || data;
+        
+        setFullTokenPayload(tokenPayload);
         hasFetchedRef.current = true;
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch token details");

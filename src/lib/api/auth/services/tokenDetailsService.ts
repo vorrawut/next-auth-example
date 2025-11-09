@@ -1,5 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import { decodeTokenPayload } from "@/lib/auth/tokenDecode";
+import type { NextRequest } from "next/server";
 
 export interface TokenDetailsResult {
   tokenPayload: Record<string, unknown>;
@@ -14,7 +15,7 @@ export interface TokenDetailsError {
  * Service for fetching full token details
  */
 export async function getTokenDetails(
-  request: Request
+  request: Request | NextRequest
 ): Promise<TokenDetailsResult | TokenDetailsError> {
   const token = await getToken({
     req: request as unknown as { headers: Headers },

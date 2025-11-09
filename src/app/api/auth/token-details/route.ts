@@ -9,7 +9,7 @@ async function handler(request: NextRequest) {
     return errorResponse(result.error, result.status);
   }
 
-  return successResponse(result);
+  return successResponse(result.tokenPayload);
 }
 
 export const GET = withErrorHandling(handler);
