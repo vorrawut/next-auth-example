@@ -1,6 +1,7 @@
 import { describe, it, expect, jest, beforeEach } from "@jest/globals";
 import { signOut } from "next-auth/react";
 import { federatedLogout } from "@/lib/auth/federatedLogout";
+import { API_ROUTES, PAGE_ROUTES } from "@/lib/routes";
 
 jest.mock("next-auth/react");
 
@@ -20,7 +21,7 @@ describe("federatedLogout", () => {
     await federatedLogout();
 
     expect(signOut).toHaveBeenCalledWith({
-      callbackUrl: "/",
+      callbackUrl: PAGE_ROUTES.LOGIN,
       redirect: true,
     });
   });
@@ -33,7 +34,7 @@ describe("federatedLogout", () => {
 
     await federatedLogout();
 
-    expect(global.fetch).toHaveBeenCalledWith("/api/auth/federated-logout", expect.objectContaining({
+    expect(global.fetch).toHaveBeenCalledWith(API_ROUTES.AUTH.FEDERATED_LOGOUT, expect.objectContaining({
       method: "POST",
       headers: expect.objectContaining({ "Content-Type": "application/json" }),
     }));

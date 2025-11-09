@@ -1,4 +1,4 @@
-import { mapKeycloakRoleToInternal, mapKeycloakRolesToInternal } from "@/config/roleMappings";
+import { mapKeycloakRolesToInternal } from "@/config/roleMappings";
 import { normalizeRoles } from "@/lib/permissions/roles";
 import { getResourceRolesByResource } from "@/lib/permissions/extraction";
 

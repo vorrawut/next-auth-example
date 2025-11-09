@@ -12,7 +12,7 @@ const customJestConfig = {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
   transformIgnorePatterns: [
-    "/node_modules/(?!(next-auth|@auth)/)",
+    "/node_modules/(?!(next-auth|@auth|@auth/core)/)",
   ],
   collectCoverageFrom: [
     "src/**/*.{js,jsx,ts,tsx}",

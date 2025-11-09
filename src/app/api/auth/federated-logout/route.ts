@@ -3,7 +3,13 @@ import { withErrorHandling, errorResponse, successResponse } from "@/lib/api/uti
 import { getFederatedLogoutUrl } from "@/lib/api/auth/services";
 
 async function handler(request: NextRequest) {
-  const result = await getFederatedLogoutUrl(request);
+  // Convert NextRequest to Request for the service
+  const serviceRequest = new Request(request.url, {
+    method: request.method,
+    headers: request.headers,
+    body: request.body,
+  });
+  const result = await getFederatedLogoutUrl(serviceRequest);
 
   if ("error" in result) {
     return errorResponse(result.error, result.status);

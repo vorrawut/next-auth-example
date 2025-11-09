@@ -29,16 +29,19 @@ const mockPrivateRoute = jest.fn(async ({ children, roles }: { children: React.R
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { hasAnyRole } = require("@/lib/permissions/roles");
   
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { PAGE_ROUTES } = require("@/lib/routes");
+  
   const session = await auth();
   if (!session) {
-    redirect("/");
+    redirect(PAGE_ROUTES.LOGIN);
     return null;
   }
 
   if (roles && roles.length > 0) {
     const userRoles = session.roles || [];
     if (!hasAnyRole(userRoles, roles)) {
-      redirect("/unauthorized");
+      redirect(PAGE_ROUTES.UNAUTHORIZED);
       return null;
     }
   }
@@ -60,7 +63,9 @@ describe("PrivateRoute", () => {
 
     await mockPrivateRoute({ children: React.createElement("div", null, "Protected Content") });
 
-    expect(mockRedirect).toHaveBeenCalledWith("/");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { PAGE_ROUTES } = require("@/lib/routes");
+    expect(mockRedirect).toHaveBeenCalledWith(PAGE_ROUTES.LOGIN);
   });
 
   it("should render children when session is available", async () => {
@@ -125,7 +130,9 @@ describe("PrivateRoute", () => {
     });
 
     expect(mockHasAnyRole).toHaveBeenCalledWith(["employee"], ["admin"]);
-    expect(mockRedirect).toHaveBeenCalledWith("/unauthorized");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { PAGE_ROUTES } = require("@/lib/routes");
+    expect(mockRedirect).toHaveBeenCalledWith(PAGE_ROUTES.UNAUTHORIZED);
   });
 
   it("should allow access when no roles are specified", async () => {

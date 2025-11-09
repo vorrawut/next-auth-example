@@ -1,5 +1,4 @@
 import { getToken } from "next-auth/jwt";
-import { NextRequest } from "next/server";
 import { auth } from "@/app/api/auth/[...nextauth]/route";
 
 export interface FederatedLogoutResult {
@@ -16,7 +15,7 @@ export interface FederatedLogoutError {
  * Service for handling federated logout logic
  */
 export async function getFederatedLogoutUrl(
-  request: NextRequest
+  request: Request
 ): Promise<FederatedLogoutResult | FederatedLogoutError> {
   const session = await auth();
 
