@@ -1,19 +1,35 @@
+"use client";
+
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import type { TokenPayload } from "@/types/token";
+import { LoadingState } from "@/components/ui/LoadingState";
 import type { Session } from "next-auth";
+import { useToken } from "@/contexts/TokenContext";
 import { extractAllPermissions, getResourceRolesByResource } from "@/utils/token";
 
 interface RolesPermissionsPanelProps {
   session: Session | null;
-  tokenPayload: TokenPayload | null;
 }
 
-export function RolesPermissionsPanel({ session, tokenPayload }: RolesPermissionsPanelProps) {
-  const realmRoles = tokenPayload?.realm_access?.roles || [];
-  const resourceRolesByResource = getResourceRolesByResource(tokenPayload);
-  const groups = tokenPayload?.groups || [];
-  const allPermissions = extractAllPermissions(tokenPayload);
+export function RolesPermissionsPanel({ session }: RolesPermissionsPanelProps) {
+  const { fullTokenPayload, loading } = useToken();
+  
+  // Extract data from full token payload
+  const realmRoles = (fullTokenPayload?.realm_access as { roles?: string[] } | undefined)?.roles || [];
+  const resourceRolesByResource = getResourceRolesByResource(fullTokenPayload as { resource_access?: Record<string, { roles?: string[] }>; groups?: string[] } | null);
+  const groups = (fullTokenPayload?.groups as string[] | undefined) || [];
+  const allPermissions = extractAllPermissions(fullTokenPayload as { realm_access?: { roles?: string[] }; resource_access?: Record<string, { roles?: string[] }> } | null);
+  
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader title="Roles & Permissions" />
+        <CardContent>
+          <LoadingState message="Loading roles and permissions..." />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>

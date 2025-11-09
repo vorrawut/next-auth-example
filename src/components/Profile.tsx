@@ -2,7 +2,6 @@
 
 import { useSession } from "next-auth/react";
 import { getHighestRole } from "@/utils/roles";
-import { useMemo } from "react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -14,10 +13,6 @@ import { TokenDetailsPanel } from "@/components/profile/TokenDetailsPanel";
 export default function Profile() {
   const { data: session, status } = useSession();
   const highestRole = getHighestRole(session?.roles);
-
-  const tokenPayload = useMemo(() => {
-    return session?.tokenPayload || null;
-  }, [session?.tokenPayload]);
 
   if (status === "loading") {
     return <LoadingState />;
@@ -35,15 +30,14 @@ export default function Profile() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <UserInfoCard
             session={session}
-            tokenPayload={tokenPayload}
             highestRole={highestRole}
           />
-          <TokenInfoCard tokenPayload={tokenPayload} />
+          <TokenInfoCard />
         </div>
 
-        <RolesPermissionsPanel session={session} tokenPayload={tokenPayload} />
+        <RolesPermissionsPanel session={session} />
 
-        <TokenDetailsPanel tokenPayload={tokenPayload} />
+        <TokenDetailsPanel />
       </div>
     </div>
   );

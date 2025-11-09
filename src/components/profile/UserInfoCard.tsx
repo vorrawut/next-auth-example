@@ -1,17 +1,26 @@
+"use client";
+
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { InfoField } from "@/components/ui/InfoField";
 import { Badge } from "@/components/ui/Badge";
-import type { TokenPayload } from "@/types/token";
 import type { Session } from "next-auth";
 import type { Role } from "@/utils/roles";
+import { useToken } from "@/contexts/TokenContext";
 
 interface UserInfoCardProps {
   session: Session | null;
-  tokenPayload: TokenPayload | null;
   highestRole: Role | null;
 }
 
-export function UserInfoCard({ session, tokenPayload, highestRole }: UserInfoCardProps) {
+export function UserInfoCard({ session, highestRole }: UserInfoCardProps) {
+  const { fullTokenPayload } = useToken();
+  
+  // Extract user fields from full token payload
+  const givenName = (fullTokenPayload?.given_name as string | undefined) || "";
+  const familyName = (fullTokenPayload?.family_name as string | undefined) || "";
+  const preferredUsername = (fullTokenPayload?.preferred_username as string | undefined) || "";
+  const emailVerified = (fullTokenPayload?.email_verified as boolean | undefined) ?? false;
+  
   return (
     <Card>
       <CardHeader title="User Information" />
@@ -20,13 +29,25 @@ export function UserInfoCard({ session, tokenPayload, highestRole }: UserInfoCar
           label="Name"
           value={session?.user?.name || "N/A"}
         />
+        {givenName && (
+          <InfoField
+            label="First Name"
+            value={givenName}
+          />
+        )}
+        {familyName && (
+          <InfoField
+            label="Last Name"
+            value={familyName}
+          />
+        )}
         <InfoField
           label="Email"
           value={session?.user?.email || "N/A"}
         />
         <InfoField
           label="Username"
-          value={tokenPayload?.preferred_username || "N/A"}
+          value={preferredUsername || "N/A"}
         />
         <InfoField
           label="Highest Role"
@@ -43,7 +64,7 @@ export function UserInfoCard({ session, tokenPayload, highestRole }: UserInfoCar
         <InfoField
           label="Email Verified"
           value={
-            tokenPayload?.email_verified ? (
+            emailVerified ? (
               <span className="text-green-600 dark:text-green-400">✓ Verified</span>
             ) : (
               <span className="text-red-600 dark:text-red-400">✗ Not Verified</span>
