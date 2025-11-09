@@ -1,0 +1,42 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: keycloak
+    environment:
+      # Development mode - allows HTTP and auto-creates admin user
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+      # Database - using H2 for simplicity (not for production)
+      KC_DB: "dev-file"
+      # Admin credentials
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      # HTTP enabled for local development
+      KC_HTTP_ENABLED: "true"
+      # Hostname
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+    ports:
+      - "8080:8080"
+    volumes:
+      # Persist data between restarts
+      - keycloak_data:/opt/keycloak/data
+    command: start-dev
+    networks:
+      - keycloak-network
+    healthcheck:
+      # Use wget which is available in Keycloak image, fallback to checking port
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/health/ready || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+volumes:
+  keycloak_data:
+    driver: local
+
+networks:
+  keycloak-network:
+    driver: bridge
+

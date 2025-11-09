@@ -24,12 +24,7 @@ declare module "next-auth/jwt" {
     accessToken?: string;
     refreshToken?: string;
     idToken?: string;
-    accessTokenExpires?: number;
-    user?: {
-      id: string;
-      name?: string | null;
-      email?: string | null;
-    };
+    expiresAt?: number; // Unix timestamp in seconds
     error?: string;
   }
 }

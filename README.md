@@ -15,7 +15,52 @@ This is a Next.js application integrated with Keycloak using OpenID Connect (OID
 
 - Node.js 20+
 - Next.js 15+
-- Keycloak 25+ (local instance or hosted)
+- Docker and Docker Compose (for local Keycloak setup)
+- Keycloak 25+ (local instance via Docker or hosted)
+
+## Quick Start
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Verify your setup:**
+   ```bash
+   npm run verify
+   ```
+   This will check if all required files and environment variables are in place.
+
+3. **Start Keycloak with Docker:**
+   ```bash
+   npm run keycloak:up
+   ```
+   Wait for Keycloak to be ready (usually 30-60 seconds). Check logs: `npm run keycloak:logs`
+
+4. **Configure Keycloak:**
+   - Access admin console: http://localhost:8080 (admin/admin)
+   - Follow the detailed guide in [keycloak-setup.md](./keycloak-setup.md)
+   - Create the "next" realm and client
+   - Copy the client secret
+
+5. **Update `.env.local`:**
+   - Replace `KEYCLOAK_CLIENT_SECRET="your-secret"` with your actual secret from Keycloak
+
+6. **Test the connection:**
+   ```bash
+   npm run test:keycloak
+   ```
+   This verifies that your Next.js app can connect to Keycloak.
+
+7. **Start the Next.js app:**
+   ```bash
+   npm run dev
+   ```
+
+8. **Test authentication:**
+   - Open http://localhost:3000
+   - Click "Login with Keycloak"
+   - You should be redirected to Keycloak login page
 
 ## Setup
 
@@ -46,6 +91,26 @@ NEXTAUTH_SECRET="random-secret"
 - Generate a secure random string for `NEXTAUTH_SECRET` (you can use `openssl rand -base64 32`)
 
 ### 3. Keycloak Configuration
+
+#### Option A: Using Docker (Recommended for Local Development)
+
+The easiest way to run Keycloak locally is using Docker:
+
+1. **Start Keycloak with Docker Compose:**
+   ```bash
+   docker-compose up -d
+   ```
+
+2. **Wait for Keycloak to be ready** (check logs: `docker-compose logs -f keycloak`)
+
+3. **Follow the setup guide:**
+   See [keycloak-setup.md](./keycloak-setup.md) for detailed step-by-step instructions to:
+   - Access the admin console (http://localhost:8080)
+   - Create the "next" realm
+   - Create and configure the client
+   - Get the client secret
+
+#### Option B: Manual Keycloak Installation
 
 1. Start your Keycloak instance (default: http://localhost:8080)
 2. Create a new realm named "next" (or update the `KEYCLOAK_ISSUER` to match your realm)
@@ -189,6 +254,37 @@ The project is configured for CI/CD with:
 - Linting (`npm run lint`)
 - Type checking (via TypeScript)
 - Unit tests (`npm test`)
+
+## Docker Commands
+
+The project includes npm scripts for managing Keycloak via Docker:
+
+```bash
+# Start Keycloak
+npm run keycloak:up
+
+# Stop Keycloak
+npm run keycloak:down
+
+# View Keycloak logs
+npm run keycloak:logs
+
+# Restart Keycloak
+npm run keycloak:restart
+
+# Reset Keycloak (removes all data and starts fresh)
+npm run keycloak:reset
+```
+
+Or use Docker Compose directly:
+
+```bash
+docker-compose up -d          # Start
+docker-compose down           # Stop
+docker-compose logs -f        # View logs
+docker-compose restart         # Restart
+docker-compose down -v        # Remove with volumes
+```
 
 ## Troubleshooting
 
