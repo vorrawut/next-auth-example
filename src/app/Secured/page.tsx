@@ -1,10 +1,10 @@
 import { PrivateRoute } from "@/helpers/PrivateRoute";
-import SecuredPage from "@/components/SecuredPage";
+import EmployeeDashboard from "@/components/EmployeeDashboard";
 
 export default function SecuredPageRoute() {
   return (
     <PrivateRoute>
-      <SecuredPage />
+      <EmployeeDashboard />
     </PrivateRoute>
   );
 }

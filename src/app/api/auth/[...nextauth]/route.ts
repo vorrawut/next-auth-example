@@ -36,12 +36,41 @@ export const authOptions = {
   },
   callbacks: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async jwt({ token, account }: any) {
+    async jwt({ token, account, profile }: any) {
       if (account) {
         token.idToken = account.id_token;
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
         token.expiresAt = account.expires_at;
+        
+        // Extract roles from Keycloak token
+        // Keycloak can return roles from:
+        // 1. realm_access.roles (realm roles)
+        // 2. resource_access[client_id].roles (client roles)
+        // 3. Groups (which are mapped to roles in Keycloak)
+        let extractedRoles: string[] = [];
+        
+        if (profile) {
+          const realmRoles = profile.realm_access?.roles || [];
+          const resourceRoles = profile.resource_access?.[process.env.KEYCLOAK_CLIENT_ID || ""]?.roles || [];
+          extractedRoles = [...realmRoles, ...resourceRoles];
+        } else if (account.id_token) {
+          // Fallback: decode id_token to get roles if profile is not available
+          try {
+            const payload = JSON.parse(Buffer.from(account.id_token.split(".")[1], "base64").toString());
+            const realmRoles = payload.realm_access?.roles || [];
+            const resourceRoles = payload.resource_access?.[process.env.KEYCLOAK_CLIENT_ID || ""]?.roles || [];
+            extractedRoles = [...realmRoles, ...resourceRoles];
+          } catch {
+            extractedRoles = [];
+          }
+        }
+        
+        // Normalize roles (map Keycloak group names like "admins", "employees", "managers" to our role names)
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { normalizeRoles } = require("@/utils/roles");
+        token.roles = normalizeRoles(extractedRoles);
+        
         return token;
       }
 
@@ -56,6 +85,8 @@ export const authOptions = {
       if (token) {
         session.accessToken = token.accessToken as string;
         session.error = token.error as string | undefined;
+        session.roles = (token.roles as string[]) || [];
+        session.idToken = token.idToken as string | undefined;
       }
       return session;
     },

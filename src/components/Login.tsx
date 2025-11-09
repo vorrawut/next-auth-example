@@ -1,6 +1,7 @@
 "use client";
 
 import { signIn } from "next-auth/react";
+import { Button } from "@/components/ui";
 
 export default function Login() {
   const handleLogin = () => {
@@ -8,12 +9,9 @@ export default function Login() {
   };
 
   return (
-    <button
-      onClick={handleLogin}
-      className="flex h-12 w-full items-center justify-center rounded-full bg-blue-600 px-5 text-white transition-colors hover:bg-blue-700 md:w-[200px]"
-    >
+    <Button onClick={handleLogin} variant="primary" size="lg" fullWidth className="md:w-[200px]">
       Login with Keycloak
-    </button>
+    </Button>
   );
 }
 

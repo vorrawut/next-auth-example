@@ -4,9 +4,16 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Login from "./Login";
 import Logout from "./Logout";
+import { hasRole, getHighestRole } from "@/utils/roles";
 
 export default function Nav() {
   const { data: session, status } = useSession();
+  const userRoles = session?.roles || [];
+  const highestRole = getHighestRole(userRoles);
+
+  const isEmployee = hasRole(userRoles, "employee");
+  const isManager = hasRole(userRoles, "manager");
+  const isAdmin = hasRole(userRoles, "admin");
 
   return (
     <nav className="flex items-center gap-4 p-4 border-b border-gray-200 dark:border-gray-800">
@@ -17,12 +24,46 @@ export default function Nav() {
         Home
       </Link>
       {status === "authenticated" && (
-        <Link
-          href="/Secured"
-          className="text-lg font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
-        >
-          Secured Page
-        </Link>
+        <>
+          <Link
+            href="/profile"
+            className="text-lg font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+          >
+            Profile
+          </Link>
+          {isEmployee && (
+            <Link
+              href="/Secured"
+              className="text-lg font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+            >
+              Dashboard
+            </Link>
+          )}
+          {isManager && (
+            <Link
+              href="/manager"
+              className="text-lg font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+            >
+              Approvals
+            </Link>
+          )}
+          {isAdmin && (
+            <>
+              <Link
+                href="/admin"
+                className="text-lg font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+              >
+                Admin Panel
+              </Link>
+              <Link
+                href="/manager"
+                className="text-lg font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+              >
+                Reports
+              </Link>
+            </>
+          )}
+        </>
       )}
       <div className="ml-auto">
         {status === "loading" ? (
@@ -31,6 +72,11 @@ export default function Nav() {
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-700 dark:text-gray-300">
               {session?.user?.name || session?.user?.email}
+              {highestRole && (
+                <span className="ml-2 text-xs text-gray-500">
+                  ({highestRole.charAt(0).toUpperCase() + highestRole.slice(1)})
+                </span>
+              )}
             </span>
             <Logout />
           </div>

@@ -1,5 +1,6 @@
 import { describe, it, expect, jest } from "@jest/globals";
 import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { useSession } from "next-auth/react";
 import Nav from "@/components/Nav";
 
@@ -25,6 +26,7 @@ describe("Nav Component", () => {
           name: "Test User",
           email: "test@example.com",
         },
+        roles: ["employee"],
       },
       status: "authenticated",
     });
@@ -47,20 +49,56 @@ describe("Nav Component", () => {
     expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
 
-  it("should show secured page link when authenticated", () => {
+  it("should show role-based navigation links when authenticated", () => {
     (useSession as jest.Mock).mockReturnValue({
       data: {
         user: {
           name: "Test User",
           email: "test@example.com",
         },
+        roles: ["employee"],
       },
       status: "authenticated",
     });
 
     render(<Nav />);
 
-    expect(screen.getByText("Secured Page")).toBeInTheDocument();
+    expect(screen.getByText("My Profile")).toBeInTheDocument();
+  });
+
+  it("should show manager links when user has manager role", () => {
+    (useSession as jest.Mock).mockReturnValue({
+      data: {
+        user: {
+          name: "Manager User",
+          email: "manager@example.com",
+        },
+        roles: ["manager"],
+      },
+      status: "authenticated",
+    });
+
+    render(<Nav />);
+
+    expect(screen.getByText("Approvals")).toBeInTheDocument();
+  });
+
+  it("should show admin links when user has admin role", () => {
+    (useSession as jest.Mock).mockReturnValue({
+      data: {
+        user: {
+          name: "Admin User",
+          email: "admin@example.com",
+        },
+        roles: ["admin"],
+      },
+      status: "authenticated",
+    });
+
+    render(<Nav />);
+
+    expect(screen.getByText("Admin Panel")).toBeInTheDocument();
+    expect(screen.getByText("Reports")).toBeInTheDocument();
   });
 });
 

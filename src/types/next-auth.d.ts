@@ -10,6 +10,8 @@ declare module "next-auth" {
     };
     accessToken?: string;
     error?: string;
+    roles?: string[];
+    idToken?: string;
   }
 
   interface User {
@@ -26,6 +28,7 @@ declare module "next-auth/jwt" {
     idToken?: string;
     expiresAt?: number; // Unix timestamp in seconds
     error?: string;
+    roles?: string[];
   }
 }
 
